@@ -2,8 +2,8 @@ var $   = require('jquery'),
   dsv   = require('dsv'),
   AWS   = require('aws-sdk');
 
-// AWS.config.loadFromPath('/path/to/credentials.json');
-// var s3 = new AWS.S3();
+AWS.config.loadFromPath('/path/to/credentials.json');
+var s3 = new AWS.S3();
 
 /* ------------------------ */
 /*    SET UP ACCOUNT INFO   */
@@ -29,8 +29,8 @@ function fetchGDoc(key){
 
       var json          = dsv.csv.parse(response);
       var sanitized_csv = sanitizeData(json);
-      console.log(sanitized_csv)
-      // uploadToS3(sanitized_csv, timestamp);
+      
+      uploadToS3(sanitized_csv, timestamp);
 
     },
     error: function(err){
@@ -45,8 +45,6 @@ function fetchGDoc(key){
 function reportStatus(text){
     console.log(text);
 }
-
-
 
 function sanitizeData(json){
   var sanitized_json = [];
