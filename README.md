@@ -12,7 +12,9 @@ Tested on Node 0.10.7
 * If you want to override the config files it uses, on the command line do:
 ````
 node gdoc-to-s3.js 'new-aws-path' 'new-gdoc-path' 'new-tweetbot-path'
-````If don't want to override one of them, write <code>default</code> instead. So, to switch it to another tweetbot you would do:
+````
+* To just override one or two, write <code>default</code> for those you want to keep. For example, to switch it to another tweetbot:
+>>>>>>> b8c251a05a09f04752f53b9d30d2ec94f84eba46
 ````
 node gdoc-to-s3.js default default 'new-tweetbot-path'
 ````

@@ -61,7 +61,11 @@ function reportStatus(text){
 
 function tweetStatus(text){
   T.post('statuses/update', { status: text }, function(err, reply) {
-    console.log(err)
+    if (err == null){
+      console.log('Successful tweet' + text)
+    }else{
+      console.log('ERROR TWEET ' + text + ' ' + err)
+    };
   });
 };
 
