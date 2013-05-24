@@ -36,16 +36,16 @@ function fetchGDoc(key){
 
       var timestamp      = getFormattedISOTimeStamp();
       var header_columns = response.split('\n')[0].split(',');
-
-      if (arraysEqual(header_columns, CONFIG.input_schema)){
+      var equality      = arraysEqual(header_columns, CONFIG.input_schema);
+      
+      if (equality){
         var status        = 'Fetch successful: ' + timestamp;
         reportStatus(status);
 
-        var json          = csvToJSON(response, header_columns);
+        var json          = csvToJSON(response);
         var sanitized_csv = sanitizeData(json);
 
-        uploadToS3_backup(response, timestamp);
-        uploadToS3_live(response, timestamp);
+        uploadToS3(response, timestamp);
       };
 
     },
@@ -96,20 +96,27 @@ function sanitizeData(json){
   return csv;
 }
 
-function csvToJSON(response, header_columns){
+function csvToJSON(response){
   var json = [];
   var rows = response.split('\n');
+  var columns = rows[0].split(',');
   // Skip the first row because it's the header row
   for (var i = 1; i < rows.length; i++){
     var obj = {};
     var vals = rows[i].split(',');
     for (var q = 0; q < vals.length; q++){
-      obj[header_columns[q]] = vals[q];
+      obj[columns[q]] = vals[q];
     }
     json.push(obj);
   }
   return json;
 }
+
+function uploadToS3(response, timestamp){
+  uploadToS3_backup(response, timestamp);
+  uploadToS3_live(response, timestamp);
+}
+
 
 function uploadToS3_backup(response, timestamp){
   var data = {
