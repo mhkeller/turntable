@@ -15,8 +15,8 @@ You can optionally set up a Twitter bot to deliver notifications by setting ``CO
 As long as you don't share you key with anyone, publishing to the web doesn't alter your sharing and security preferences for that doc. If there are columns that you don't want visible in your csv on S3. There are two options:
 
 <ol>
-  <li>If you're okay with that data being accessible if someone know the spreadsheet key, then, in the script, you can specify which columns it will copy over to S3 by naming them in the <code>output_schema</code> key of the <code>CONFIG</code> object.</li>
-  <li>If you want more security, create a second sheet with a formula like <code>=Sheet1!A:A</code> in Column A, <code>=Sheet1!B:B</code> in Column B and so on. If you copy that formula down, it will take the values from Sheet1 only for the columns you specify. The downside: if you don't copy the formula in Sheet 2 to enough rows, then it won't carry over the data. So you have to keep an eye on it and make sure your formula is in all rows. You'll want to overwrite the ajax url to make sure it grabs the proper worksheet.</li>
+  <li>If you're okay with that data being accessible if someone know the spreadsheet key, then, in the script, you can specify which columns it will copy over to S3 by naming them in the ``output_schema`` key of the ``CONFIG`` object.</li>
+  <li>If you want more security, create a second sheet with a formula like ``=Sheet1!A:A`` in Column A, ``=Sheet1!B:B`` in Column B and so on. If you copy that formula down, it will take the values from Sheet1 only for the columns you specify. The downside: if you don't copy the formula in Sheet 2 to enough rows, then it won't carry over the data. So you have to keep an eye on it and make sure your formula is in all rows. You'll want to overwrite the ajax url to make sure it grabs the proper worksheet.</li>
 </ol>
 
 ### Dependencies
@@ -45,3 +45,8 @@ You can install with
 ````
 npm install twit
 ````
+
+## TODO
+
+* Export ``CONFIG`` settings to separate file / command line arguments.
+* Set up as exportable module per jsvine's suggestion
