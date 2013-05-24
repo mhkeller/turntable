@@ -53,7 +53,7 @@ function fetchGDoc(key){
       console.log(err);
       var timestamp = getFormattedISOTimeStamp();
       var status    = 'Ajax error: ' + timestamp;
-      tweetStatus(status);
+      reportStatus(status);
     }
   })
 }
