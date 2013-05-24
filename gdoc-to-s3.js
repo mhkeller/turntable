@@ -11,11 +11,6 @@ var aws_info      = require('./config/aws-info.json')
 AWS.config.loadFromPath(aws_info.credentials);
 var s3 = new AWS.S3();
 
-/* ------------------------ */
-/*    SET UP ACCOUNT INFO   */
-/*      AND FILE SCHEMA     */
-/* ------------------------ */
-
 if (tweetbot_info.use_twitter_bot){
   TweetBot = require('twit');
   T = new TweetBot( tweetbot_info );
