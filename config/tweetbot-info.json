@@ -3,5 +3,5 @@
   "consumer_key":         "w",
   "consumer_secret":      "x",
   "access_token":         "y",
- "access_token_secret":  "z"
+  "access_token_secret":  "z"
 }
