@@ -1,0 +1,6 @@
+{
+	"credentials": "/path/to/credentials.json",
+	"bucket": "bucket_name",
+	"output_path": "tests/",
+	"file_name": "names.csv"
+}
