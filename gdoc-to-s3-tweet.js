@@ -1,8 +1,20 @@
 var $   = require('jquery'),
-  AWS   = require('aws-sdk');
+  AWS   = require('aws-sdk'),
+  T     = require('twit');
 
 AWS.config.loadFromPath('/path/to/credentials.json');
 var s3 = new AWS.S3();
+
+
+var Twit = require('twit')
+
+var T = new Twit({
+  consumer_key:         '...',
+  consumer_secret:      '...',
+  access_token:         '...',
+  access_token_secret:  '...'
+});
+
 
 /* ------------------------ */
 /*    SET UP ACCOUNT INFO   */
@@ -48,6 +60,11 @@ function fetchGDoc(key){
 
 function reportStatus(text){
     console.log(text);
+    tweetStatus(text);
+}
+
+function tweetStatus(text){
+  T.post('statuses/update', { status: text }, function(err, reply) {})
 }
 
 function arraysEqual(arr1, arr2) {
