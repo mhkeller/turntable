@@ -1,6 +1,7 @@
 var $   = require('jquery'),
   dsv   = require('dsv'),
   AWS   = require('aws-sdk'),
+  TweetBot,
   T;
 
 AWS.config.loadFromPath('/path/to/credentials.json');
@@ -20,12 +21,12 @@ var CONFIG = {
 };
 
 if (CONFIG.use_twitter_bot){
-  T = require('twit');
-  T = new Twit({
-    consumer_key:         '...',
-    consumer_secret:      '...',
-    access_token:         '...',
-    access_token_secret:  '...'
+  TweetBot = require('twit');
+  T = new TweetBot({
+    consumer_key:         'w',
+    consumer_secret:      'x',
+    access_token:         'y',
+    access_token_secret:  'z'
   });
 
 }
@@ -61,6 +62,12 @@ function reportStatus(text){
         tweetStatus(text);
       }
 }
+
+function tweetStatus(text){
+  T.post('statuses/update', { status: text }, function(err, reply) {
+    // console.log('Status updated')
+  })
+};
 
 function sanitizeData(json){
   var sanitized_json = [];
