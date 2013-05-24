@@ -2,8 +2,8 @@ var $   = require('jquery'),
   dsv   = require('dsv'),
   AWS   = require('aws-sdk');
 
-AWS.config.loadFromPath('/path/to/credentials.json');
-var s3 = new AWS.S3();
+// AWS.config.loadFromPath('/path/to/credentials.json');
+// var s3 = new AWS.S3();
 
 /* ------------------------ */
 /*    SET UP ACCOUNT INFO   */
@@ -12,10 +12,9 @@ var s3 = new AWS.S3();
 var CONFIG = {
   bucket: '',
   key: '0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE',
-  output_schema: ['name','color'], // These are the columns to carry over into your csv on S3
+  output_schema: ['name','color'], // These are the columns to carry over into your file on S3
   output_path: 'tests/',
-  file_name: 'names.csv',
-  delimiter: '\t'
+  file_name: 'names.csv'
 };
 
 function fetchGDoc(key){
@@ -30,8 +29,8 @@ function fetchGDoc(key){
 
       var json          = dsv.csv.parse(response);
       var sanitized_csv = sanitizeData(json);
-
-      uploadToS3(sanitized_csv, timestamp);
+      console.log(sanitized_csv)
+      // uploadToS3(sanitized_csv, timestamp);
 
     },
     error: function(err){
@@ -47,21 +46,20 @@ function reportStatus(text){
     console.log(text);
 }
 
-function sanitizeData(json){
-  var csv = CONFIG.output_schema.join(CONFIG.delimiter) + '\n';
-  for (var i = 0; i < json.length; i++){
-    var row = [];
-    for (var q = 0; q < CONFIG.output_schema.length; q++){
-      row.push(json[i][CONFIG.output_schema[q]])
-    }
-    if (i < json.length - 1){
-      csv += row.join(CONFIG.delimiter) + '\n';
-    }else{
-      csv += row.join(CONFIG.delimiter);
-    }
-  }
 
-  return csv;
+
+function sanitizeData(json){
+  var sanitized_json = [];
+  json.forEach(function(row){
+    var obj = {};
+    CONFIG.output_schema.forEach(function(col){
+      obj[col] = row[col];
+    });
+    sanitized_json.push(obj);
+  });
+
+  // Convert to csv
+  return dsv.csv.format(sanitized_json);
 }
 
 function uploadToS3(sanitized_csv, timestamp){
