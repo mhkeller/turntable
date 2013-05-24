@@ -13,8 +13,7 @@ Tested on Node 0.10.7
 ````
 node gdoc-to-s3.js 'new-aws-path' 'new-gdoc-path' 'new-tweetbot-path'
 ````
-
-If don't want to override one of them, write <code>default</code> instead. So, to switch it to another tweetbot you would do:
+* To just override one or two, write <code>default</code> for those you want to keep. For example, to switch it to another tweetbot:
 ````
 node gdoc-to-s3.js default default 'new-tweetbot-path'
 ````
