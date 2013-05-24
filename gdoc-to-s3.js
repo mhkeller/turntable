@@ -66,7 +66,7 @@ function reportStatus(text){
 function tweetStatus(text){
   T.post('statuses/update', { status: text }, function(err, reply) {
     console.log(err)
-  })
+  });
 };
 
 function sanitizeData(json){
