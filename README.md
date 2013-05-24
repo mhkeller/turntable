@@ -4,6 +4,8 @@ A Node.js script, ideal for a chron, that will download data from a Google Sprea
 
 You'll want to create an AWS `credentials.json` file [per these instructions](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/configuring.html) and put it somewhere like `~/.aws/credentials.json` and type that path into ``AWS.config.loadFromPath()``.
 
+Tested on Node 0.10.7
+
 ### Features
 * Only uploads the columns you specify in ``CONFIG.output_schema`` in case there are fields you use internally that aren't meant for production. For instance, you might have an "Edited by" or "Written by" column that you want to keep in your document but don't need to show publicly.
 * Uploads two copies of your data: the production copy that gets overwritten each time with new data; and a timestamped copy that goes into the ``backups`` directory specified in ``CONFIG.output_path`` next to the csv. This way, you can easily revert to an old version if necessary.
