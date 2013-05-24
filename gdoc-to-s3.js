@@ -1,6 +1,7 @@
 var $   = require('jquery'),
   dsv   = require('dsv'),
-  AWS   = require('aws-sdk');
+  AWS   = require('aws-sdk'),
+  T;
 
 AWS.config.loadFromPath('/path/to/credentials.json');
 var s3 = new AWS.S3();
@@ -14,8 +15,20 @@ var CONFIG = {
   key: '0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE',
   output_schema: ['name','color'], // These are the columns to carry over into your file on S3
   output_path: 'tests/',
-  file_name: 'names.csv'
+  file_name: 'names.csv',
+  use_twitter_bot: false
 };
+
+if (CONFIG.use_twitter_bot){
+  T = require('twit');
+  T = new Twit({
+    consumer_key:         '...',
+    consumer_secret:      '...',
+    access_token:         '...',
+    access_token_secret:  '...'
+  });
+
+}
 
 function fetchGDoc(key){
   $.ajax({
@@ -29,7 +42,7 @@ function fetchGDoc(key){
 
       var json          = dsv.csv.parse(response);
       var sanitized_csv = sanitizeData(json);
-      
+
       uploadToS3(sanitized_csv, timestamp);
 
     },
@@ -44,6 +57,9 @@ function fetchGDoc(key){
 
 function reportStatus(text){
     console.log(text);
+    if(CONFIG.use_twitter_bot){
+        tweetStatus(text);
+      }
 }
 
 function sanitizeData(json){
