@@ -38,7 +38,7 @@ function fetchGDoc(key){
 
       var timestamp      = getFormattedISOTimeStamp();
 
-      var status        = 'Fetch successful: ' + timestamp;
+      var status        = 'Successful fetch: ' + timestamp;
       reportStatus(status);
 
       var json          = dsv.csv.parse(response);
@@ -50,7 +50,7 @@ function fetchGDoc(key){
     error: function(err){
       console.log(err);
       var timestamp = getFormattedISOTimeStamp();
-      var status    = 'Ajax error: ' + timestamp;
+      var status    = 'ERROR IN AJAX!: ' + timestamp;
       reportStatus(status);
     }
   })
@@ -65,7 +65,7 @@ function reportStatus(text){
 
 function tweetStatus(text){
   T.post('statuses/update', { status: text }, function(err, reply) {
-    // console.log('Status updated')
+    console.log(err)
   })
 };
 
@@ -89,6 +89,7 @@ function uploadToS3(sanitized_csv, timestamp){
 }
 
 function uploadToS3_backup(sanitized_csv, timestamp){
+  var status;
   var data = {
     Bucket: CONFIG.bucket,
     Key: CONFIG.output_path + 'backups/' + timestamp + CONFIG.file_name,
@@ -96,13 +97,17 @@ function uploadToS3_backup(sanitized_csv, timestamp){
   };
   s3.client.putObject( data , function (resp) {
     if (resp == null){
-      var status = 'Backup upload successful: ' + timestamp;
+      status = 'Successful backup upload: ' + timestamp;
+      reportStatus(status);
+    }else{
+      status = 'ERROR IN BACKUP UPLOAD: ' + timestamp;
       reportStatus(status);
     };
   });
 }
 
 function uploadToS3_live(sanitized_csv, timestamp){
+  var status;
   var data = {
     Bucket: CONFIG.bucket,
     Key: CONFIG.output_path + CONFIG.file_name,
@@ -110,7 +115,10 @@ function uploadToS3_live(sanitized_csv, timestamp){
   };
   s3.client.putObject( data , function (resp) {
     if (resp == null){
-      var status = 'Live file overwrite successful: ' + timestamp;
+      status = 'Successful live file overwrite: ' + timestamp;
+      reportStatus(status);
+    }else{
+      status = 'ERROR IN LIVE UPLOAD: ' + timestamp;
       reportStatus(status);
     };
   });
