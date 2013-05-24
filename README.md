@@ -2,7 +2,10 @@
 
 A Node.js script, ideal for a chron, that will download data from a Google Spreadsheet and put it on an Amazon S3 bucket. To get your spreadsheet key, do `File > Publish to the Web` in Google Spreadsheets.
 
-You'll want to create a `credentials.json` file [per these instructions](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/configuring.html) and put it somewhere like `~/.aws/credentials.json` and type that path into <code>AWS.config.loadFromPath()</code>.
+You'll want to create an AWS `credentials.json` file [per these instructions](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/configuring.html) and put it somewhere like `~/.aws/credentials.json` and type that path into <code>AWS.config.loadFromPath()</code>.
+
+### Twitter updates
+``gdoc-to-s3-tweet.js`` includes options to have a Twitter bot tweet the status of the script whenever it runs. You could set that up as a private Twitter account and have it followed by your team to get immediate updates of success and/or failures.
 
 ## A note on security
 As long as you don't share you key with anyone, publishing to the web doesn't alter your sharing and security preferences for that doc. If there are columns that you don't want visible in your csv on S3. There are two options:
