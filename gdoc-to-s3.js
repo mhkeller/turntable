@@ -1,8 +1,8 @@
 var $   = require('jquery'),
   AWS   = require('aws-sdk');
 
-AWS.config.loadFromPath('/path/to/credentials.json');
-var s3 = new AWS.S3();
+// AWS.config.loadFromPath('/path/to/credentials.json');
+// var s3 = new AWS.S3();
 
 /* ------------------------ */
 /*    SET UP ACCOUNT INFO   */
@@ -11,7 +11,6 @@ var s3 = new AWS.S3();
 var CONFIG = {
   bucket: '',
   key: '0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE',
-  input_schema:  ['name','color'], // These are the columns in your Google Doc used to verify the response
   output_schema: ['name','color'], // These are the columns to carry over into your csv on S3
   output_path: 'tests/',
   file_name: 'names.csv'
@@ -24,17 +23,15 @@ function fetchGDoc(key){
 
       var timestamp      = getFormattedISOTimeStamp();
       var header_columns = response.split('\n')[0].split(',');
-      var equality       = arraysEqual(header_columns, CONFIG.input_schema);
 
-      if (equality){
-        var status        = 'Fetch successful: ' + timestamp;
-        reportStatus(status);
+      var status        = 'Fetch successful: ' + timestamp;
+      reportStatus(status);
 
-        var json          = csvToJSON(response);
-        var sanitized_csv = sanitizeData(json);
-        
-        uploadToS3(response, timestamp);
-      };
+      var json          = csvToJSON(response);
+      var sanitized_csv = sanitizeData(json);
+      console.log(sanitized_csv)
+
+      uploadToS3(sanitized_csv, timestamp);
 
     },
     error: function(err){
@@ -95,16 +92,16 @@ function csvToJSON(response){
   return json;
 }
 
-function uploadToS3(response, timestamp){
-  uploadToS3_backup(response, timestamp);
-  uploadToS3_live(response, timestamp);
+function uploadToS3(sanitized_csv, timestamp){
+  uploadToS3_backup(sanitized_csv, timestamp);
+  uploadToS3_live(sanitized_csv, timestamp);
 }
 
-function uploadToS3_backup(response, timestamp){
+function uploadToS3_backup(sanitized_csv, timestamp){
   var data = {
     Bucket: CONFIG.bucket,
     Key: CONFIG.output_path + 'backups/' + timestamp + CONFIG.file_name,
-    Body: response
+    Body: sanitized_csv
   };
   s3.client.putObject( data , function (resp) {
     if (resp == null){
@@ -114,11 +111,11 @@ function uploadToS3_backup(response, timestamp){
   });
 }
 
-function uploadToS3_live(response, timestamp){
+function uploadToS3_live(sanitized_csv, timestamp){
   var data = {
     Bucket: CONFIG.bucket,
     Key: CONFIG.output_path + CONFIG.file_name,
-    Body: response
+    Body: sanitized_csv
   };
   s3.client.putObject( data , function (resp) {
     if (resp == null){

@@ -45,7 +45,7 @@ function fetchGDoc(key){
         var json          = csvToJSON(response);
         var sanitized_csv = sanitizeData(json);
 
-        uploadToS3(response, timestamp);
+        uploadToS3(sanitized_csv, timestamp);
       };
 
     },
@@ -112,17 +112,17 @@ function csvToJSON(response){
   return json;
 }
 
-function uploadToS3(response, timestamp){
-  uploadToS3_backup(response, timestamp);
-  uploadToS3_live(response, timestamp);
+function uploadToS3(sanitized_csv, timestamp){
+  uploadToS3_backup(sanitized_csv, timestamp);
+  uploadToS3_live(sanitized_csv, timestamp);
 }
 
 
-function uploadToS3_backup(response, timestamp){
+function uploadToS3_backup(sanitized_csv, timestamp){
   var data = {
     Bucket: CONFIG.bucket,
     Key: CONFIG.output_path + 'backups/' + timestamp + CONFIG.file_name,
-    Body: response
+    Body: sanitized_csv
   };
   s3.client.putObject( data , function (resp) {
     if (resp == null){
@@ -132,11 +132,11 @@ function uploadToS3_backup(response, timestamp){
   });
 }
 
-function uploadToS3_live(response, timestamp){
+function uploadToS3_live(sanitized_csv, timestamp){
   var data = {
     Bucket: CONFIG.bucket,
     Key: CONFIG.output_path + CONFIG.file_name,
-    Body: response
+    Body: sanitized_csv
   };
   s3.client.putObject( data , function (resp) {
     if (resp == null){
