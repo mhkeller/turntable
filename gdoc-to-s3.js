@@ -60,7 +60,7 @@ function reportStatus(text){
     console.log(text);
     if(CONFIG.use_twitter_bot){
         tweetStatus(text);
-      }
+    }
 }
 
 function tweetStatus(text){
