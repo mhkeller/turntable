@@ -15,7 +15,6 @@ With backups, you can easily revert to an old version if necessary.
 node gdoc-to-s3.js 'new-aws-path' 'new-gdoc-path' 'new-tweetbot-path'
 ````
 * To just override one or two, write <code>default</code> for those you want to keep. For example, to switch it to another tweetbot:
->>>>>>> b8c251a05a09f04752f53b9d30d2ec94f84eba46
 ````
 node gdoc-to-s3.js default default 'new-tweetbot-path'
 ````
