@@ -40,7 +40,8 @@ function fetchGDoc(key){
       var json          = dsv.csv.parse(response);
       var sanitized_csv = sanitizeData(json);
 
-      uploadToS3(sanitized_csv, timestamp);
+      uploadToS3(sanitized_csv, timestamp, 'backup');
+      uploadToS3(sanitized_csv, timestamp, 'live');
 
     },
     error: function(err){
@@ -83,42 +84,28 @@ function sanitizeData(json){
   return dsv.csv.format(sanitized_json);
 }
 
-function uploadToS3(sanitized_csv, timestamp){
-  uploadToS3_backup(sanitized_csv, timestamp);
-  uploadToS3_live(sanitized_csv, timestamp);
-}
+function uploadToS3(sanitized_csv, timestamp, which_file){
+  var status,
+    key_info;
 
-function uploadToS3_backup(sanitized_csv, timestamp){
-  var status;
+  if(which_file == 'backup'){
+    key_info = aws_info.backup_path + timestamp + aws_info.file_name;
+  }else{
+    key_info = aws_info.output_path + aws_info.file_name;
+  };
+
   var data = {
     Bucket: aws_info.bucket,
-    Key: aws_info.output_path + 'backups/' + timestamp + aws_info.file_name,
+    Key: key_info,
     Body: sanitized_csv
   };
-  s3.client.putObject( data , function (resp) {
-    if (resp == null){
-      status = 'Successful backup upload: ' + timestamp;
-      reportStatus(status);
-    }else{
-      status = 'ERROR IN BACKUP UPLOAD: ' + timestamp;
-      reportStatus(status);
-    };
-  });
-}
 
-function uploadToS3_live(sanitized_csv, timestamp){
-  var status;
-  var data = {
-    Bucket: aws_info.bucket,
-    Key: aws_info.output_path + aws_info.file_name,
-    Body: sanitized_csv
-  };
   s3.client.putObject( data , function (resp) {
     if (resp == null){
-      status = 'Successful live file overwrite: ' + timestamp;
+      status = 'Successful '+which_file+' upload: ' + timestamp;
       reportStatus(status);
     }else{
-      status = 'ERROR IN LIVE UPLOAD: ' + timestamp;
+      status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp;
       reportStatus(status);
     };
   });

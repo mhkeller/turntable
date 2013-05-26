@@ -2,5 +2,6 @@
 	"credentials": "/path/to/credentials.json",
 	"bucket": "bucket_name",
 	"output_path": "tests/",
+  "backup_path": "tests/backups/",
 	"file_name": "names.csv"
 }
