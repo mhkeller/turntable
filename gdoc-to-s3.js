@@ -9,27 +9,16 @@ var aws_info      = require('./config/aws-info.json')
     gdoc_info     = require('./config/gdoc-info.json'),
     tweetbot_info = require('./config/tweetbot-info.json');
 
-// To override the default config files
-if (process.argv[2] != undefined && process.argv[2] != 'default'){
-  aws_info = require(process.argv[2]);
-}
-if (process.argv[3] != undefined && process.argv[3] != 'default'){
-  gdoc_info = require(process.argv[3]);
-}
-if (process.argv[4] != undefined && process.argv[4] != 'default'){
-  tweetbot_info = require(process.argv[4]);
-}
-
-function initS3(aws_info){
-  AWS.config.loadFromPath(aws_info.credentials);
-  s3 = new AWS.S3();
-}
 
 if (tweetbot_info.use_twitter_bot){
   TweetBot = require('twit');
   T = new TweetBot( tweetbot_info );
 };
 
+function initS3(aws_info){
+  AWS.config.loadFromPath(aws_info.credentials);
+  s3 = new AWS.S3();
+}
 var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info){
   initS3(aws_info);
   $.ajax({
