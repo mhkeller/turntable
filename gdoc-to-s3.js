@@ -1,6 +1,7 @@
 var $   = require('jquery'),
     dsv   = require('dsv'),
     AWS   = require('aws-sdk'),
+    S3,
     TweetBot,
     T;
 
@@ -19,17 +20,20 @@ if (process.argv[4] != undefined && process.argv[4] != 'default'){
   tweetbot_info = require(process.argv[4]);
 }
 
-AWS.config.loadFromPath(aws_info.credentials);
-var s3 = new AWS.S3();
+function initS3(aws_info){
+  AWS.config.loadFromPath(aws_info.credentials);
+  s3 = new AWS.S3();
+}
 
 if (tweetbot_info.use_twitter_bot){
   TweetBot = require('twit');
   T = new TweetBot( tweetbot_info );
 };
 
-function fetchGDoc(key){
+var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info){
+  initS3(aws_info);
   $.ajax({
-    url: 'https://docs.google.com/spreadsheet/pub?key=' + key + '&output=csv',
+    url: 'https://docs.google.com/spreadsheet/pub?key=' + gdoc_info.key + '&output=csv',
     success:function(response){
 
       var timestamp      = getFormattedISOTimeStamp();
@@ -116,4 +120,7 @@ function getFormattedISOTimeStamp(){
   // and adding an underscore at the end to separate it from the file_name
   return new Date().toISOString().replace(/:/g,'_').replace('Z','') + '_';
 }
-fetchGDoc(gdoc_info.key);
+
+module.exports = {
+  fetchAndUpload: fetchAndUpload
+}
