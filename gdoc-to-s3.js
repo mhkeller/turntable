@@ -27,9 +27,9 @@ if (tweetbot_info.use_twitter_bot){
   T = new TweetBot( tweetbot_info );
 };
 
-function fetchGDoc(key){
+function fetchGDoc(){
   $.ajax({
-    url: 'https://docs.google.com/spreadsheet/pub?key=' + key + '&output=csv',
+    url: 'https://docs.google.com/spreadsheet/pub?key=' + gdoc_info.key + '&output=csv',
     success:function(response){
 
       var timestamp      = getFormattedISOTimeStamp();
@@ -116,4 +116,4 @@ function getFormattedISOTimeStamp(){
   // and adding an underscore at the end to separate it from the file_name
   return new Date().toISOString().replace(/:/g,'_').replace('Z','') + '_';
 }
-fetchGDoc(gdoc_info.key);
+fetchGDoc();
