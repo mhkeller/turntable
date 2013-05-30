@@ -5,9 +5,24 @@ var $   = require('jquery'),
     TweetBot,
     T;
 
-var aws_info      = require('./config/aws-info.json')
-    gdoc_info     = require('./config/gdoc-info.json'),
-    tweetbot_info = require('./config/tweetbot-info.json');
+var aws_info      = {
+  "credentials": "/path/to/credentials.json",
+  "bucket": "bucket_name",
+  "output_path": "tests/",
+  "backup_path": "tests/backups/",
+  "file_name": "names.csv"
+}
+var gdoc_info     = {
+  "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
+  "output_schema": ["name", "color"]
+}
+var tweetbot_info = {
+  "use_twitter_bot":      false,
+  "consumer_key":         "w",
+  "consumer_secret":      "x",
+  "access_token":         "y",
+  "access_token_secret":  "z"
+}
 
 
 if (tweetbot_info.use_twitter_bot){
