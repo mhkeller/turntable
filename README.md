@@ -31,6 +31,7 @@ node gdoc-to-s3.js default default 'new-tweetbot-path'
 
 ### TODO
 
+* Tests
 * Callback when everything is done
 
 ### Twitter updates
