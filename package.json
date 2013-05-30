@@ -23,7 +23,7 @@
   "gitHead": "2a12aeb6ce4703d88da25bdf11a9339b32868f2c",
   "dependencies": {
     "jquery": "1.8.3",
-    "aws-sdk": "1.1.0",
+    "aws-sdk": "1.2.0",
     "dsv":   "0.0.2",
     "twit":   "1.1.6"
   }
