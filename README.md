@@ -1,10 +1,14 @@
 # Google Docs to S3
 
-A Node.js script, ideal for a chron, that will download data from a Google Spreadsheet and put it on an Amazon S3 bucket. To get your spreadsheet key, do `File > Publish to the Web` in Google Spreadsheets.
+A Node.js module, ideal for a chron, that will download data from a Google Spreadsheet and put it on an Amazon S3 bucket. To get your spreadsheet key, do `File > Publish to the Web` in Google Spreadsheets.
 
 You'll want to create an AWS `credentials.json` file [per these instructions](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/configuring.html) and put it somewhere like `~/.aws/credentials.json` and type that path into ``path`` in ``config/aws-info.json``.
 
 Tested on Node 0.10.7
+
+### Usage
+
+See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/module/examples/example.js)</code>
 
 ### Features
 * Only uploads the columns you specify in ``output_schema`` in ``config/gdoc_info.json`` in case there are fields you use internally that aren't meant for production. For instance, you might have an "Edited by" or "Written by" column that you want to keep in your document but don't need to show publicly.
@@ -21,8 +25,7 @@ node gdoc-to-s3.js default default 'new-tweetbot-path'
 
 ### TODO
 
-* Better command line args parsing
-* Set up as exportable module per jsvine's suggestion
+* Callback when everything is done
 
 ### Twitter updates
 You can optionally set up a Twitter bot to deliver notifications by setting ``use_twitter_bot`` to ``true`` in ``config/tweetbot_info.json``. This can be used mostly likely on a private account for easy team notifications. Setting @-replies for errors could be an effective notification systems. Successes needn't be so noisy.
