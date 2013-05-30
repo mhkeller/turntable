@@ -20,14 +20,7 @@ See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/master/exampl
 * Only uploads the columns you specify in ``output_schema`` in ``config/gdoc_info.json`` in case there are fields you use internally that aren't meant for production. For instance, you might have an "Edited by" or "Written by" column that you want to keep in your document but don't need to show publicly.
 * Uploads two copies of your data: 1) the production copy that gets overwritten each time with new data; 2) a timestamped copy that goes into the ``backups`` directory. The default directory is ``backups`` in the same directory as your ``output_path``. You can set your own backup directory in ``config/aws-info``.
 With backups, you can easily revert to an old version if necessary.
-* If you want to override the config files it uses, type:
-````
-node gdoc-to-s3.js 'new-aws-path' 'new-gdoc-path' 'new-tweetbot-path'
-````
-* To just override one or two, write <code>default</code> for those you want to keep. For example, to use another tweetbot config file, type:
-````
-node gdoc-to-s3.js default default 'new-tweetbot-path'
-````
+
 
 ### TODO
 
