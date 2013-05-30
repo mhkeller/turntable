@@ -6,6 +6,12 @@ You'll want to create an AWS `credentials.json` file [per these instructions](ht
 
 Tested on Node 0.10.7
 
+### Installation
+````
+npm install gdoc-to-s3
+````
+
+
 ### Usage
 
 See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/module/examples/example.js)</code>
