@@ -17,8 +17,8 @@ npm install gdoc-to-s3
 See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code>
 
 ### Features
-* Only uploads the columns you specify in ``output_schema`` in the ``[gdoc_info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)`` object in case there are fields you use internally that aren't meant for production. For instance, you might have an "Edited by" or "Written by" column that you want to keep in your document but don't need to show publicly.
-* Uploads two copies of your data: 1) the production copy that gets overwritten each time with new data; 2) a timestamped copy that goes into the ``backups`` directory. The default directory is ``backups`` in the same directory as your ``output_path``. You can set your own backup directory in the ``[aws-info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)`` object.
+* Only uploads the columns you specify in ``output_schema`` in the <code>[gdoc_info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code> object in case there are fields you use internally that aren't meant for production. For instance, you might have an "Edited by" or "Written by" column that you want to keep in your document but don't need to show publicly.
+* Uploads two copies of your data: 1) the production copy that gets overwritten each time with new data; 2) a timestamped copy that goes into the ``backups`` directory. The default directory is ``backups`` in the same directory as your ``output_path``. You can set your own backup directory in the <code>[aws-info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code> object.
 With backups, you can easily revert to an old version if necessary.
 
 
@@ -28,7 +28,7 @@ With backups, you can easily revert to an old version if necessary.
 * Callback when everything is done
 
 ### Twitter updates
-You can optionally set up a Twitter bot to deliver notifications by setting ``use_twitter_bot`` to ``true`` in the ``[tweetbot_info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)`` object. This can be used mostly likely on a private account for easy team notifications. Setting @-replies for errors could be an effective notification systems. Successes needn't be so noisy.
+You can optionally set up a Twitter bot to deliver notifications by setting ``use_twitter_bot`` to ``true`` in the <code>[tweetbot_info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code> object. This can be used mostly likely on a private account for easy team notifications. Setting @-replies for errors could be an effective notification systems. Successes needn't be so noisy.
 
 ### A note on data privacy
 As long as you don't share you key with anyone, publishing to the web doesn't alter your sharing and security preferences for that doc. If there are columns that you don't want visible in your csv on S3. There are two options:
