@@ -14,7 +14,7 @@ npm install gdoc-to-s3
 
 ### Usage
 
-See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/module/examples/example.js)</code>
+See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code>
 
 ### Features
 * Only uploads the columns you specify in ``output_schema`` in ``config/gdoc_info.json`` in case there are fields you use internally that aren't meant for production. For instance, you might have an "Edited by" or "Written by" column that you want to keep in your document but don't need to show publicly.
