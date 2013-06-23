@@ -10,7 +10,8 @@ var aws_info      = {
   "bucket": "bucket_name",
   "output_path": "tests/",
   "backup_path": "tests/backups/",
-  "file_name": "names.csv"
+  "file_name": "names.csv",
+  "make_backup": true
 }
 var gdoc_info     = {
   "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
@@ -50,7 +51,9 @@ var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info, callback){
       var json          = dsv.csv.parse(response);
       var sanitized_csv = sanitizeData(json);
 
-      uploadToS3(sanitized_csv, timestamp, 'backup', callback);
+      if (aws_info.make_backup == true){
+        uploadToS3(sanitized_csv, timestamp, 'backup', callback);
+      };
       uploadToS3(sanitized_csv, timestamp, 'live', callback);
 
     },
@@ -95,7 +98,7 @@ function sanitizeData(json){
 }
 
 function processDone(callback, calls){
-  if(calls.length > 1){
+  if((calls.length > 1 && aws_info.make_backup == true) || (calls.length > 0 && aws_info.make_backup == false)){
     $.each(calls, function(ind, val){
       var msg;
       if (val['error'] != undefined){
