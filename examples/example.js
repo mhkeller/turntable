@@ -5,7 +5,8 @@ gs3.aws_info      = {
   "bucket": "bucket_name",
   "output_path": "tests/",
   "backup_path": "tests/backups/",
-  "file_name": "names.csv"
+  "file_name": "names.csv",
+  "make_backup": true
 }
 gs3.gdoc_info     = {
   "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
