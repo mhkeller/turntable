@@ -19,4 +19,6 @@ gs3.tweetbot_info = {
   "access_token_secret":  "z"
 }
 
-gs3.fetchAndUpload(gs3.aws_info, gs3.gdoc_info, gs3.tweetbot_info);
+gs3.fetchAndUpload(gs3.aws_info, gs3.gdoc_info, gs3.tweetbot_info, function(resp){
+  console.log(resp); // Both files successfully uploaded!
+});

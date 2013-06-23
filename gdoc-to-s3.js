@@ -30,11 +30,13 @@ if (tweetbot_info.use_twitter_bot){
   T = new TweetBot( tweetbot_info );
 };
 
+var calls = [];
+
 function initS3(aws_info){
   AWS.config.loadFromPath(aws_info.credentials);
   s3 = new AWS.S3();
 }
-var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info){
+var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info, callback){
   initS3(aws_info);
   $.ajax({
     url: 'https://docs.google.com/spreadsheet/pub?key=' + gdoc_info.key + '&output=csv',
@@ -42,14 +44,14 @@ var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info){
 
       var timestamp      = getFormattedISOTimeStamp();
 
-      var status        = 'Successful fetch: ' + timestamp;
+      var status         = 'Successful fetch: ' + timestamp;
       reportStatus(status);
 
       var json          = dsv.csv.parse(response);
       var sanitized_csv = sanitizeData(json);
 
-      uploadToS3(sanitized_csv, timestamp, 'backup');
-      uploadToS3(sanitized_csv, timestamp, 'live');
+      uploadToS3(sanitized_csv, timestamp, 'backup', callback);
+      uploadToS3(sanitized_csv, timestamp, 'live', callback);
 
     },
     error: function(err){
@@ -92,9 +94,25 @@ function sanitizeData(json){
   return dsv.csv.format(sanitized_json);
 }
 
-function uploadToS3(sanitized_csv, timestamp, which_file){
+function processDone(callback, calls){
+  if(calls.length > 1){
+    $.each(calls, function(ind, val){
+      var msg;
+      if (val['error'] != undefined){
+        msg = 'Error in ' + val['error'] + ' file upload!'
+        callback(msg);
+      }else if (ind == 1){
+        msg = 'Both files successfully uploaded!';
+        callback(msg);
+      }
+    });
+  }
+}
+
+function uploadToS3(sanitized_csv, timestamp, which_file, callback){
   var status,
-    key_info;
+    key_info,
+    callback_obj = {};
 
   if(which_file == 'backup'){
     key_info = aws_info.backup_path + timestamp + aws_info.file_name;
@@ -112,9 +130,17 @@ function uploadToS3(sanitized_csv, timestamp, which_file){
     if (resp == null){
       status = 'Successful '+which_file+' upload: ' + timestamp;
       reportStatus(status);
+
+      callback_obj['success'] = which_file;
+      calls.push(callback_obj);
+      processDone(callback, calls);
     }else{
       status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp;
       reportStatus(status);
+
+      callback_obj['error'] = which_file;
+      calls.push(callback_obj);
+      processDone(callback, calls);
     };
   });
 }

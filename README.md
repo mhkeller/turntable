@@ -25,7 +25,6 @@ With backups, you can easily revert to an old version if necessary.
 ### TODO
 
 * Tests
-* Callback when everything is done
 
 ### Twitter updates
 You can optionally set up a Twitter bot to deliver notifications by setting ``use_twitter_bot`` to ``true`` in the <code>[tweetbot_info](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code> object. This can be used mostly likely on a private account for easy team notifications. Setting @-replies for errors could be an effective notification systems. Successes needn't be so noisy.
