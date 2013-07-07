@@ -5,6 +5,11 @@ var $   = require('jquery'),
     TweetBot,
     T;
 
+var callback_status = {
+  live: null,
+  backup: null
+};
+
 var aws_info      = {
   "credentials": "/path/to/credentials.json",
   "bucket": "bucket_name",
@@ -31,12 +36,11 @@ if (tweetbot_info.use_twitter_bot){
   T = new TweetBot( tweetbot_info );
 };
 
-var calls = [];
-
 function initS3(aws_info){
   AWS.config.loadFromPath(aws_info.credentials);
   s3 = new AWS.S3();
 }
+
 var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info, callback){
   initS3(aws_info);
   $.ajax({
@@ -67,7 +71,7 @@ var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info, callback){
 }
 
 function reportStatus(text){
-    console.log(text);
+    // console.log(text);
     if(tweetbot_info.use_twitter_bot){
         tweetStatus(text);
     }
@@ -97,25 +101,22 @@ function sanitizeData(json){
   return dsv.csv.format(sanitized_json);
 }
 
-function processDone(callback, calls){
-  if((calls.length > 1 && aws_info.make_backup == true) || (calls.length > 0 && aws_info.make_backup == false)){
-    $.each(calls, function(ind, val){
-      var msg;
-      if (val['error'] != undefined){
-        msg = 'Error in ' + val['error'] + ' file upload!'
-        callback(msg);
-      }else if (ind == 1){
-        msg = 'Both files successfully uploaded!';
-        callback(msg);
-      }
-    });
-  }
-}
+function checkCallback(which_file, callback){
+  var msg;
+  if (aws.info.make_backup == false){
+    msg = 'Live file upload ' + callback_status['live']
+  }else{
+    msg = 'Live file upload ' + callback_status['live'] + ' and backup file upload ' + callback_status['backup']
+    if (callback_status['live'] != null && callback_status['backup'] != null){ // This could also be done with something like underscore's _.after() or setting a counter and only calling `callback` the second time, but setting another variable or including a whole other library seems expensive for just one function that can be accomplished this way.
+      callback(msg)
+    };
+  };
+
+};
 
 function uploadToS3(sanitized_csv, timestamp, which_file, callback){
   var status,
-    key_info,
-    callback_obj = {};
+    key_info;
 
   if(which_file == 'backup'){
     key_info = aws_info.backup_path + timestamp + aws_info.file_name;
@@ -133,18 +134,14 @@ function uploadToS3(sanitized_csv, timestamp, which_file, callback){
     if (resp == null){
       status = 'Successful '+which_file+' upload: ' + timestamp;
       reportStatus(status);
-
-      callback_obj['success'] = which_file;
-      calls.push(callback_obj);
-      processDone(callback, calls);
+      callback_status[which_file] = 'success';
     }else{
       status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp;
       reportStatus(status);
-
-      callback_obj['error'] = which_file;
-      calls.push(callback_obj);
-      processDone(callback, calls);
+      callback_status[which_file] = 'error';
     };
+
+    checkCallback(callback);
   });
 }
 

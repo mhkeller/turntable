@@ -1,6 +1,6 @@
 {
   "name": "gdoc-to-s3",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A node.js package to put a Google Spreadsheet onto an Amazon S3 server, plus some other niceties.",
   "main": "gdoc-to-s3.js",
   "scripts": {
