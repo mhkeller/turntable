@@ -1,4 +1,4 @@
-# Google Docs to S3
+# Turntable
 
 A Node.js module, ideal for a chron, that will download data from a Google Spreadsheet and put select columns on an Amazon S3 bucket. To get your spreadsheet key, do `File > Publish to the Web` in Google Spreadsheets.
 
