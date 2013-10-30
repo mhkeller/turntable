@@ -1,14 +1,14 @@
 {
-  "name": "gdoc-to-s3",
+  "name": "turntable",
   "version": "1.0.2",
   "description": "A node.js package to put a Google Spreadsheet onto an Amazon S3 server, plus some other niceties.",
-  "main": "gdoc-to-s3.js",
+  "main": "turntable.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhkeller/gdoc-to-s3.git"
+    "url": "https://github.com/mhkeller/turntable.git"
   },
   "keywords": [
     "AWS",
