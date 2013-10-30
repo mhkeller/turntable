@@ -3,7 +3,10 @@ var $   = require('jquery'),
     AWS   = require('aws-sdk'),
     S3,
     TweetBot,
-    T;
+    T,
+    aws_info,
+    gdoc_info,
+    tweetbot_info;
 
 var callback_status = {
   live: null,
@@ -21,21 +24,22 @@ function initS3(aws_info){
 }
 
 var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
-  var aws_info      = $.extend({
+  aws_info      = $.extend({
     "credentials": "/path/to/credentials.json",
     "bucket": "bucket_name",
     "output_path": "tests/",
     "backup_path": "tests/backups/",
     "file_name": "names.csv",
-    "make_backup": true
+    "make_backup": true,
   }, aws_opts);
 
-  var gdoc_info     = $.extend({
+  gdoc_info     = $.extend({
     "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
-    "output_schema": ["name", "color"]
+    "output_schema": ["name", "color"],
+    "moderate": false
   }, gdoc_info);
 
-  var tweetbot_info = $.extend({
+  tweetbot_info = $.extend({
     "use_twitter_bot":      false,
     "consumer_key":         "w",
     "consumer_secret":      "x",
@@ -56,11 +60,15 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
       var json           = dsv.csv.parse(response);
       var sanitized_data = sanitizeData(json);
 
+      if (gdoc_info.moderate){
+        sanitized_data = moderateData(sanitized_data);
+      }
+
       if (gdoc_info.file_name.split('.')[1] == 'csv'){
         sanitized_data =  dsv.csv.format(sanitized_json);
       }
 
-      if (aws_info.make_backup == true){
+      if (aws_info.make_backup){
         uploadToS3(sanitized_data, timestamp, 'backup', callback);
       };
       uploadToS3(sanitized_data, timestamp, 'live', callback);
@@ -91,6 +99,16 @@ function tweetStatus(text){
     };
   });
 };
+
+function moderateData(json){
+  var moderated_json = [];
+  json.forEach(function(row){
+    if (row[gdoc_info.moderate] == 'y'){
+      moderated_json.push(row)
+    }
+  });
+  return moderated_json
+}
 
 function sanitizeData(json){
   var sanitized_json = [];
