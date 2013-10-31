@@ -107,7 +107,6 @@ function tweetStatus(text){
 function moderateData(json){
   var moderated_json = [];
   json.forEach(function(row){
-      console.log(row)
     if (row[gdoc_info.moderate] == 'y'){
       moderated_json.push(row)
     }
