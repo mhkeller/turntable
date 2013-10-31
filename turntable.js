@@ -60,11 +60,12 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
       reportStatus(status);
 
       var json           = dsv.csv.parse(response);
+      if (gdoc_info.moderate){
+        json = moderateData(json);
+      }
+      
       var sanitized_data = sanitizeData(json);
 
-      if (gdoc_info.moderate){
-        sanitized_data = moderateData(sanitized_data);
-      }
 
       if (aws_info.file_name.split('.')[1] == 'csv'){
         sanitized_data =  dsv.csv.format(sanitized_json);
@@ -106,6 +107,7 @@ function tweetStatus(text){
 function moderateData(json){
   var moderated_json = [];
   json.forEach(function(row){
+      console.log(row)
     if (row[gdoc_info.moderate] == 'y'){
       moderated_json.push(row)
     }
