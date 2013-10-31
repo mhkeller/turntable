@@ -33,7 +33,7 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
     "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
     "output_schema": ["name", "color"],
     "moderate": false
-  }, gdoc_info);
+  }, gdoc_opts);
 
   tweetbot_info = $.extend({
     "use_twitter_bot":      false,
@@ -49,7 +49,7 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
   };
 
   initS3(aws_info);
-  
+
   $.ajax({
     url: 'https://docs.google.com/spreadsheet/pub?key=' + gdoc_info.key + '&output=csv',
     success:function(response){
@@ -68,28 +68,29 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
 
       if (aws_info.file_name.split('.')[1] == 'csv'){
         sanitized_data =  dsv.csv.format(sanitized_json);
+      }else if(aws_info.file_name.split('.')[1] == 'json'){
+        sanitized_data =  JSON.stringify(sanitized_data);
       }
 
       if (aws_info.make_backup){
         uploadToS3(sanitized_data, timestamp, 'backup', callback);
-      };
+      }
       uploadToS3(sanitized_data, timestamp, 'live', callback);
 
     },
     error: function(err){
-      console.log(err);
       var timestamp = getFormattedISOTimeStamp();
-      var status    = 'ERROR IN AJAX!: ' + timestamp;
+      var status    = 'ERROR IN AJAX!: ' + timestamp + ' ' + err.responseText;
       reportStatus(status);
     }
   })
 }
 
 function reportStatus(text){
-    // console.log(text);
-    if(tweetbot_info.use_twitter_bot){
-        tweetStatus(text);
-    }
+  console.log(text);
+  if(tweetbot_info.use_twitter_bot){
+      tweetStatus(text);
+  }
 }
 
 function tweetStatus(text){
@@ -126,9 +127,9 @@ function sanitizeData(json){
   return sanitized_json;
 }
 
-function checkCallback(which_file, callback){
+function checkCallback(callback){
   var msg;
-  if (aws.info.make_backup == false){
+  if (aws_info.make_backup == false){
     msg = 'Live file upload ' + callback_status['live']
   }else{
     msg = 'Live file upload ' + callback_status['live'] + ' and backup file upload ' + callback_status['backup']
@@ -161,7 +162,7 @@ function uploadToS3(sanitized_data, timestamp, which_file, callback){
       reportStatus(status);
       callback_status[which_file] = 'success';
     }else{
-      status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp;
+      status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp + ' ' + resp;
       reportStatus(status);
       callback_status[which_file] = 'error';
     };
