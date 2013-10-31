@@ -154,7 +154,8 @@ function uploadToS3(sanitized_data, timestamp, which_file, callback){
   var data = {
     Bucket: aws_info.bucket,
     Key: key_info,
-    Body: sanitized_data
+    Body: sanitized_data,
+    ACL: 'public-read'
   };
 
   s3.client.putObject( data , function (resp) {
