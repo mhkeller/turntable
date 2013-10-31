@@ -66,7 +66,7 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
         sanitized_data = moderateData(sanitized_data);
       }
 
-      if (gdoc_info.file_name.split('.')[1] == 'csv'){
+      if (aws_info.file_name.split('.')[1] == 'csv'){
         sanitized_data =  dsv.csv.format(sanitized_json);
       }
 
