@@ -13,10 +13,6 @@ var callback_status = {
   backup: null
 };
 
-if (tweetbot_info.use_twitter_bot){
-  TweetBot = require('twit');
-  T = new TweetBot( tweetbot_info );
-};
 
 function initS3(aws_info){
   AWS.config.loadFromPath(aws_info.credentials);
@@ -47,7 +43,13 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
     "access_token_secret":  "z"
   }, tweetbot_opts);
 
+  if (tweetbot_info.use_twitter_bot){
+    TweetBot = require('twit');
+    T = new TweetBot( tweetbot_info );
+  };
+
   initS3(aws_info);
+  
   $.ajax({
     url: 'https://docs.google.com/spreadsheet/pub?key=' + gdoc_info.key + '&output=csv',
     success:function(response){
