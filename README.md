@@ -16,11 +16,11 @@ npm install turntable
 
 See <code>[example.js](https://github.com/mhkeller/gdoc-to-s3/blob/master/examples/example.js)</code>
 
-The options are fairly self-explanatory. The only two that aren't clear are `output_schema` and `moderate`.
+The options are fairly self-explanatory. The only two that aren't immediately obvious are `output_schema` and `moderate`.
 
-`output_schema` is an array of column names to copy over into your public table. This is useful if you collect reader contact info that you want to keep but that you don't want to make public. Set `output_schema` this to `false` to copy over all columns.
+* `output_schema` is an array of column names to copy over into your public table. This is useful if you collect reader contact info that you want to keep but that you don't want to make public. Set `output_schema` to `false` to copy all columns.
 
-`moderate` sets options that will only copy over approved rows. Set the name of the moderation column in `column_name` and the string that approves a row in `approved_stamp`. Set `moderate` to `false` to copy over all rows.
+* `moderate` sets options that will only copy over approved rows. Set the name of the moderation column in `column_name` and the string that approves a row in `approved_stamp`. Set `moderate` to `false` to copy all rows.
 
 
 ### Features
