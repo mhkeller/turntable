@@ -11,7 +11,10 @@ var aws_opts            = {
 var gdoc_opts           = {
   "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
   "output_schema": ["name", "color"],
-  "moderate": false
+  "moderate": {
+    "column_name": "approved",
+    "approved_stamp": "yes"
+  }
 }
 var tweetbot_opts       = {
   "use_twitter_bot":      false,

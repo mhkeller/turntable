@@ -59,24 +59,24 @@ var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
       var status         = 'Successful fetch: ' + timestamp;
       reportStatus(status);
 
-      var json           = dsv.csv.parse(response);
+      var data           = dsv.csv.parse(response);
       if (gdoc_info.moderate){
-        json = moderateData(json);
+        data = moderateData(data);
       }
-      
-      var sanitized_data = sanitizeData(json);
-
+      if (gdoc_opts.output_schema){
+        data = sanitizeData(data);
+      }
 
       if (aws_info.file_name.split('.')[1] == 'csv'){
-        sanitized_data =  dsv.csv.format(sanitized_json);
+        data =  dsv.csv.format(data);
       }else if(aws_info.file_name.split('.')[1] == 'json'){
-        sanitized_data =  JSON.stringify(sanitized_data);
+        data =  JSON.stringify(data);
       }
 
       if (aws_info.make_backup){
-        uploadToS3(sanitized_data, timestamp, 'backup', callback);
+        uploadToS3(data, timestamp, 'backup', callback);
       }
-      uploadToS3(sanitized_data, timestamp, 'live', callback);
+      uploadToS3(data, timestamp, 'live', callback);
 
     },
     error: function(err){
@@ -107,7 +107,7 @@ function tweetStatus(text){
 function moderateData(json){
   var moderated_json = [];
   json.forEach(function(row){
-    if (row[gdoc_info.moderate] == 'y'){
+    if (row[gdoc_info.moderate.column_name] == gdoc_info.moderate.approved_stamp){
       moderated_json.push(row)
     }
   });
