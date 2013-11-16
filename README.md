@@ -2,7 +2,7 @@
 
 A Node.js module, ideal for a chron, that will download data from a Google Spreadsheet and put select columns on an Amazon S3 bucket. To get your spreadsheet key, do `File > Publish to the Web` in Google Spreadsheets.
 
-You'll want to create an AWS `credentials.json` file [per these instructions](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/configuring.html) and put it somewhere like `~/.aws/credentials.json` and type that path into `path` in `config/aws-info.json`.
+You'll want to create an AWS `credentials.json` file [like the sample](https://github.com/mhkeller/turntable/blob/master/examples/credentials.sample.json) and put it somewhere like `~/.aws/credentials.json` and type that path into `path` in `config/aws-info.json`.
 
 Tested on Node 0.10.7
 
