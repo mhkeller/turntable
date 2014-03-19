@@ -1,7 +1,7 @@
 {
   "name": "gdoc-to-s3",
-  "version": "1.0.3",
-  "description": "A node.js package to put a Google Spreadsheet onto an Amazon S3 server, plus some other niceties.",
+  "version": "1.0.4",
+  "description": "This library has been deprecated and become [turntable](https://www.npmjs.org/package/turntable). Please use that instead.",
   "main": "turntable.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
