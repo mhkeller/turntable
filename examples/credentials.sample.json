@@ -1,0 +1,1 @@
+{ "accessKeyId": "akid", "secretAccessKey": "secret", "region": "us-west-2" }

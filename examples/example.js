@@ -1,6 +1,6 @@
-var gs3 = require('gdoc-to-s3');
+var turntable = require('turntable');
 
-gs3.aws_info      = {
+var aws_opts            = {
   "credentials": "/path/to/aws/credentials.json",
   "bucket": "bucket_name",
   "output_path": "tests/",
@@ -8,11 +8,15 @@ gs3.aws_info      = {
   "file_name": "names.csv",
   "make_backup": true
 }
-gs3.gdoc_info     = {
+var gdoc_opts           = {
   "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
-  "output_schema": ["name", "color"]
+  "output_schema": ["name", "color"],
+  "moderate": {
+    "column_name": "approved",
+    "approved_stamp": "yes"
+  }
 }
-gs3.tweetbot_info = {
+var tweetbot_opts       = {
   "use_twitter_bot":      false,
   "consumer_key":         "w",
   "consumer_secret":      "x",
@@ -20,6 +24,6 @@ gs3.tweetbot_info = {
   "access_token_secret":  "z"
 }
 
-gs3.fetchAndUpload(gs3.aws_info, gs3.gdoc_info, gs3.tweetbot_info, function(resp){
+turntable.fetchAndUpload(aws_opts, gdoc_opts, tweetbot_opts, function(resp){
   console.log(resp); // Both files successfully uploaded!
 });

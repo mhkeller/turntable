@@ -3,46 +3,53 @@ var $   = require('jquery'),
     AWS   = require('aws-sdk'),
     S3,
     TweetBot,
-    T;
+    T,
+    aws_info,
+    gdoc_info,
+    tweetbot_info;
 
 var callback_status = {
   live: null,
   backup: null
 };
 
-var aws_info      = {
-  "credentials": "/path/to/credentials.json",
-  "bucket": "bucket_name",
-  "output_path": "tests/",
-  "backup_path": "tests/backups/",
-  "file_name": "names.csv",
-  "make_backup": true
-}
-var gdoc_info     = {
-  "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
-  "output_schema": ["name", "color"]
-}
-var tweetbot_info = {
-  "use_twitter_bot":      false,
-  "consumer_key":         "w",
-  "consumer_secret":      "x",
-  "access_token":         "y",
-  "access_token_secret":  "z"
-}
-
-
-if (tweetbot_info.use_twitter_bot){
-  TweetBot = require('twit');
-  T = new TweetBot( tweetbot_info );
-};
 
 function initS3(aws_info){
   AWS.config.loadFromPath(aws_info.credentials);
   s3 = new AWS.S3();
 }
 
-var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info, callback){
+var fetchAndUpload = function(aws_opts, gdoc_opts, tweetbot_opts, callback){
+  aws_info      = $.extend({
+    "credentials": "/path/to/credentials.json",
+    "bucket": "bucket_name",
+    "output_path": "tests/",
+    "backup_path": "tests/backups/",
+    "file_name": "names.csv",
+    "make_backup": true,
+  }, aws_opts);
+
+  gdoc_info     = $.extend({
+    "key": "0Aoev8mClJKw_dFFEUHZLV1UzQmloaHRMdHIzeXVGZFE",
+    "output_schema": ["name", "color"],
+    "moderate": false
+  }, gdoc_opts);
+
+  tweetbot_info = $.extend({
+    "use_twitter_bot":      false,
+    "consumer_key":         "w",
+    "consumer_secret":      "x",
+    "access_token":         "y",
+    "access_token_secret":  "z"
+  }, tweetbot_opts);
+
+  if (tweetbot_info.use_twitter_bot){
+    TweetBot = require('twit');
+    T = new TweetBot( tweetbot_info );
+  };
+
   initS3(aws_info);
+
   $.ajax({
     url: 'https://docs.google.com/spreadsheet/pub?key=' + gdoc_info.key + '&output=csv',
     success:function(response){
@@ -52,29 +59,39 @@ var fetchAndUpload = function(aws_info, gdoc_info, tweetbot_info, callback){
       var status         = 'Successful fetch: ' + timestamp;
       reportStatus(status);
 
-      var json          = dsv.csv.parse(response);
-      var sanitized_csv = sanitizeData(json);
+      var data           = dsv.csv.parse(response);
+      if (gdoc_info.moderate){
+        data = moderateData(data);
+      }
+      if (gdoc_opts.output_schema){
+        data = sanitizeData(data);
+      }
 
-      if (aws_info.make_backup == true){
-        uploadToS3(sanitized_csv, timestamp, 'backup', callback);
-      };
-      uploadToS3(sanitized_csv, timestamp, 'live', callback);
+      if (aws_info.file_name.split('.')[1] == 'csv'){
+        data =  dsv.csv.format(data);
+      }else if(aws_info.file_name.split('.')[1] == 'json'){
+        data =  JSON.stringify(data);
+      }
+
+      if (aws_info.make_backup){
+        uploadToS3(data, timestamp, 'backup', callback);
+      }
+      uploadToS3(data, timestamp, 'live', callback);
 
     },
     error: function(err){
-      console.log(err);
       var timestamp = getFormattedISOTimeStamp();
-      var status    = 'ERROR IN AJAX!: ' + timestamp;
+      var status    = 'ERROR IN AJAX!: ' + timestamp + ' ' + err.responseText;
       reportStatus(status);
     }
   })
 }
 
 function reportStatus(text){
-    // console.log(text);
-    if(tweetbot_info.use_twitter_bot){
-        tweetStatus(text);
-    }
+  console.log(text);
+  if(tweetbot_info.use_twitter_bot){
+      tweetStatus(text);
+  }
 }
 
 function tweetStatus(text){
@@ -87,6 +104,16 @@ function tweetStatus(text){
   });
 };
 
+function moderateData(json){
+  var moderated_json = [];
+  json.forEach(function(row){
+    if (row[gdoc_info.moderate.column_name] == gdoc_info.moderate.approved_stamp){
+      moderated_json.push(row)
+    }
+  });
+  return moderated_json
+}
+
 function sanitizeData(json){
   var sanitized_json = [];
   json.forEach(function(row){
@@ -98,12 +125,12 @@ function sanitizeData(json){
   });
 
   // Convert to csv
-  return dsv.csv.format(sanitized_json);
+  return sanitized_json;
 }
 
-function checkCallback(which_file, callback){
+function checkCallback(callback){
   var msg;
-  if (aws.info.make_backup == false){
+  if (aws_info.make_backup == false){
     msg = 'Live file upload ' + callback_status['live']
   }else{
     msg = 'Live file upload ' + callback_status['live'] + ' and backup file upload ' + callback_status['backup']
@@ -114,7 +141,7 @@ function checkCallback(which_file, callback){
 
 };
 
-function uploadToS3(sanitized_csv, timestamp, which_file, callback){
+function uploadToS3(sanitized_data, timestamp, which_file, callback){
   var status,
     key_info;
 
@@ -127,7 +154,8 @@ function uploadToS3(sanitized_csv, timestamp, which_file, callback){
   var data = {
     Bucket: aws_info.bucket,
     Key: key_info,
-    Body: sanitized_csv
+    Body: sanitized_data,
+    ACL: 'public-read'
   };
 
   s3.client.putObject( data , function (resp) {
@@ -136,7 +164,7 @@ function uploadToS3(sanitized_csv, timestamp, which_file, callback){
       reportStatus(status);
       callback_status[which_file] = 'success';
     }else{
-      status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp;
+      status = 'ERROR IN '+which_file.toUpperCase()+' UPLOAD: ' + timestamp + ' ' + resp;
       reportStatus(status);
       callback_status[which_file] = 'error';
     };
